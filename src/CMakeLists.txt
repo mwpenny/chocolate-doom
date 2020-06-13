@@ -131,12 +131,42 @@ endif()
 
 if(WIN32)
     add_executable("${PROGRAM_PREFIX}doom" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+elseif(PSP)
+    set(PSP_EBOOT_TITLE "DOOM")
+    add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
+    add_psp_executable("${PROGRAM_PREFIX}doom")
 else()
     add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
 endif()
 
 target_include_directories("${PROGRAM_PREFIX}doom" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
+
+if(PSP)
+    set(PSP_LIBS
+        -lpspvram
+
+        -lGL
+        -lpspgu
+        -lpspge
+        -lpspvfpu
+
+        -lc
+
+        -lpspuser
+        -lpspkernel
+        -lpspaudio
+        -lpspdisplay
+        -lpspdebug
+        -lpspctrl
+        -lpspnet
+        -lpspnet_inet
+        -lpspnet_resolver
+        -lpsphprm
+        -lpsprtc
+    )
+    target_link_libraries("${PROGRAM_PREFIX}doom" doom ${PSP_LIBS})
+endif()
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES

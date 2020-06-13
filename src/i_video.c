@@ -49,6 +49,11 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
 
@@ -112,8 +117,13 @@ int video_display = 0;
 
 // Screen width and height, from configuration file.
 
+#ifdef __PSP__
+int window_width = 480;
+int window_height = 272;
+#else
 int window_width = 800;
 int window_height = 600;
+#endif
 
 // Fullscreen mode, 0x0 for SDL_WINDOW_FULLSCREEN_DESKTOP.
 
@@ -148,7 +158,11 @@ int force_software_renderer = false;
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
+#ifdef __PSP__
+static int startup_delay = 0;
+#else
 static int startup_delay = 1000;
+#endif
 
 // Grab the mouse? (int type for config code). nograbmouse_override allows
 // this to be temporarily disabled via the command line.
@@ -774,6 +788,15 @@ void I_FinishUpdate (void)
         }
     }
 
+#ifdef __PSP__
+    // HACK: SDL_UpdateTexture() is broken on PSP, so we have to create a new one each time :/
+    // This is probaly worth investigating and fixing in SDL2
+    SDL_DestroyTexture(texture_upscaled);
+    texture_upscaled = SDL_CreateTextureFromSurface(renderer, screenbuffer);
+
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+#else
     // Blit from the paletted 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture.
 
@@ -797,6 +820,7 @@ void I_FinishUpdate (void)
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+#endif
 
     // Draw!
 
@@ -1354,6 +1378,20 @@ static void SetVideoMode(void)
     // Initially create the upscaled texture for rendering to screen
 
     CreateUpscaledTexture(true);
+
+#ifdef __PSP__
+    // HACK: This is necessary to fill the screen when rendering
+    int screen_width;
+    SDL_GetWindowSize(screen, &screen_width, NULL);
+
+    SDL_Rect viewport_rect = {
+        0,
+        0,
+        window_width + (screen_width - window_width) / 2,  // what the fuck? This isn't Quake III Arena
+        actualheight
+    };
+    SDL_RenderSetViewport(renderer, &viewport_rect);
+#endif
 }
 
 void I_InitGraphics(void)

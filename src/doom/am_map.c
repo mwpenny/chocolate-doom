@@ -599,30 +599,38 @@ AM_Responder
 {
 
     int rc;
+    static int lastjoybuttons = 0;
     static int bigstate=0;
     static char buffer[20];
     int key;
 
+#define JOY_BUTTON_PRESSED(x) ((ev->data1 & (1 << (x))) != 0)
+#define JOY_BUTTON_HELD(x) ((lastjoybuttons & (1 << (x))) != 0)
+
     rc = false;
 
-    if (ev->type == ev_joystick && joybautomap >= 0
-        && (ev->data1 & (1 << joybautomap)) != 0)
+    if (ev->type == ev_joystick)
     {
-        joywait = I_GetTime() + 5;
-
-        if (!automapactive)
+        if (joybautomap >= 0
+            && JOY_BUTTON_PRESSED(joybautomap)
+            && !JOY_BUTTON_HELD(joybautomap))
         {
-            AM_Start ();
-            viewactive = false;
-        }
-        else
-        {
-            bigstate = 0;
-            viewactive = true;
-            AM_Stop ();
+            if (!automapactive)
+            {
+                AM_Start ();
+                viewactive = false;
+            }
+            else
+            {
+                bigstate = 0;
+                viewactive = true;
+                AM_Stop ();
+            }
         }
 
-        return true;
+        // Don't repeatedly toggle the automap if the button is held
+        lastjoybuttons = ev->data1;
+        return automapactive && JOY_BUTTON_PRESSED(joybautomap);
     }
 
     if (!automapactive)

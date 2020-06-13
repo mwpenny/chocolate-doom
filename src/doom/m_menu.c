@@ -1358,6 +1358,7 @@ boolean M_Responder (event_t* ev)
     int             ch;
     int             key;
     int             i;
+    static  int     lastjoybuttons = 0;
     static  int     mousewait = 0;
     static  int     mousey = 0;
     static  int     lasty = 0;
@@ -1433,8 +1434,30 @@ boolean M_Responder (event_t* ev)
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
 #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+#define JOY_BUTTON_HELD(x) (JOY_BUTTON_MAPPED(x) && (lastjoybuttons & (1 << (x))) != 0)
 
-            if (JOY_BUTTON_PRESSED(joybfire))
+            if (JOY_BUTTON_PRESSED(joybup))
+            {
+                key = key_menu_up;
+                joywait = I_GetTime() + 5;
+            }
+            if (JOY_BUTTON_PRESSED(joybdown))
+            {
+                key = key_menu_down;
+                joywait = I_GetTime() + 5;
+            }
+            if (JOY_BUTTON_PRESSED(joybleft))
+            {
+                key = key_menu_left;
+                joywait = I_GetTime() + 5;
+            }
+            if (JOY_BUTTON_PRESSED(joybright))
+            {
+                key = key_menu_right;
+                joywait = I_GetTime() + 5;
+            }
+
+            if (JOY_BUTTON_PRESSED(joybfire) && !JOY_BUTTON_HELD(joybfire))
             {
                 // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
                 if (messageToPrint && messageNeedsInput)
@@ -1455,9 +1478,8 @@ boolean M_Responder (event_t* ev)
                     }
                     key = key_menu_forward;
                 }
-                joywait = I_GetTime() + 5;
             }
-            if (JOY_BUTTON_PRESSED(joybuse))
+            if (JOY_BUTTON_PRESSED(joybuse) && !JOY_BUTTON_HELD(joybuse))
             {
                 // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
                 if (messageToPrint && messageNeedsInput)
@@ -1473,14 +1495,14 @@ boolean M_Responder (event_t* ev)
                 {
                     key = key_menu_back;
                 }
-                joywait = I_GetTime() + 5;
             }
         }
-        if (JOY_BUTTON_PRESSED(joybmenu))
+        if (JOY_BUTTON_PRESSED(joybmenu) && !JOY_BUTTON_HELD(joybmenu))
         {
             key = key_menu_activate;
-            joywait = I_GetTime() + 5;
         }
+
+        lastjoybuttons = ev->data1;
     }
     else
     {

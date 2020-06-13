@@ -38,6 +38,11 @@
 
 #include "z_zone.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 //
 // DEFAULTS
 //

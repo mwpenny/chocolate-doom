@@ -52,8 +52,13 @@ char *snd_musiccmd = "";
 
 int snd_pitchshift = -1;
 
+#ifdef __PSP__
+int snd_musicdevice = SNDDEVICE_SOUNDCANVAS;
+int snd_sfxdevice = SNDDEVICE_SOUNDCANVAS;
+#else
 int snd_musicdevice = SNDDEVICE_SB;
 int snd_sfxdevice = SNDDEVICE_SB;
+#endif
 
 // Low-level sound and music modules we are using
 static sound_module_t *sound_module;

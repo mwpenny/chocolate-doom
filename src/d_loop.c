@@ -38,6 +38,11 @@
 #include "net_sdl.h"
 #include "net_loop.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 // The complete set of data for a particular tic.
 
 typedef struct

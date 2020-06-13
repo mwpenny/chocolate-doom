@@ -26,6 +26,11 @@
 
 #include "z_zone.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define vprintf pspDebugScreenPrintf
+#endif
+
 typedef struct 
 {
     char *from_text;

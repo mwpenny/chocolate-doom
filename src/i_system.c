@@ -52,6 +52,11 @@
 #define DEFAULT_RAM 16 /* MiB */
 #define MIN_RAM     4  /* MiB */
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 
 typedef struct atexit_listentry_s atexit_listentry_t;
 
@@ -161,37 +166,41 @@ byte *I_ZoneBase (int *size)
 void I_PrintBanner(const char *msg)
 {
     int i;
-    int spaces = 35 - (strlen(msg) / 2);
+    int spaces = 33 - (strlen(msg) / 2);
 
     for (i=0; i<spaces; ++i)
-        putchar(' ');
+        printf(" ");
 
-    puts(msg);
+    printf("%s\n", msg);
 }
 
 void I_PrintDivider(void)
 {
     int i;
 
-    for (i=0; i<75; ++i)
+    for (i=0; i<68; ++i)
     {
-        putchar('=');
+        printf("=");
     }
 
-    putchar('\n');
+    printf("\n");
 }
 
 void I_PrintStartupBanner(const char *gamedescription)
 {
     I_PrintDivider();
     I_PrintBanner(gamedescription);
+#ifdef __PSP__
+    I_PrintBanner("PSP port by Matt Penny");
+#endif
     I_PrintDivider();
     
     printf(
     " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
-    " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
-    " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"
-    " copies under certain conditions. See the source for more information.\n");
+    " License.  There is NO warranty; not even for MERCHANTABILITY or\n"
+    " FITNESS FOR A PARTICULAR PURPOSE. You are welcome to change and\n"
+    " distribute copies under certain conditions. See the source for\n"
+    " more information.\n");
 
     I_PrintDivider();
 }

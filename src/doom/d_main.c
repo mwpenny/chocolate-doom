@@ -76,6 +76,11 @@
 
 #include "d_main.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -126,7 +131,11 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
+#ifdef __PSP__
+int             show_endoom = 0;
+#else
 int             show_endoom = 1;
+#endif
 int             show_diskicon = 1;
 
 
@@ -1724,8 +1733,13 @@ void D_DoomMain (void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+
+    // Sound is painfully slow to load :(
+    // Causes the game to freeze for a while when uncached sounds play
+#ifndef __PSP__
     I_InitSound(true);
     I_InitMusic();
+#endif
 
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();

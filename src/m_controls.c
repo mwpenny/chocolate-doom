@@ -190,6 +190,34 @@ int key_menu_screenshot = 0;
 // Joystick controls
 //
 
+#ifdef __PSP__
+// D-pad
+int joybup = 8;
+int joybdown = 6;
+int joybleft = 7;
+int joybright = 9;
+
+int joybfire = 2;  // X
+int joybstrafe = -1;
+int joybuse = 1;  // O
+int joybspeed = -1;
+
+int joybstrafeleft = 4;  // L
+int joybstraferight = 5; // R
+
+int joybjump = -1;
+
+int joybprevweapon = 0;  // Triangle
+int joybnextweapon = 3;  // Square
+
+int joybmenu = 11;  // Start
+int joybautomap = 10;  // Select
+#else
+int joybup = -1;
+int joybdown = -1;
+int joybleft = -1;
+int joybright = -1;
+
 int joybfire = 0;
 int joybstrafe = 1;
 int joybuse = 3;
@@ -205,6 +233,7 @@ int joybnextweapon = -1;
 
 int joybmenu = -1;
 int joybautomap = -1;
+#endif
 
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed

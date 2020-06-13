@@ -31,6 +31,11 @@
 #include "m_config.h"
 #include "m_misc.h"
 
+#ifdef __PSP__
+#include <pspdebug.h>
+#define printf pspDebugScreenPrintf
+#endif
+
 // When an axis is within the dead zone, it is set to zero.
 // This is 5% of the full range:
 
@@ -42,11 +47,19 @@ static SDL_Joystick *joystick = NULL;
 
 // Standard default.cfg Joystick enable/disable
 
+#ifdef __PSP__
+static int usejoystick = 1;
+
+// SDL GUID and index of the joystick to use.
+static char *joystick_guid = "PSP builtin joypad";
+static int joystick_index = 0;
+#else
 static int usejoystick = 0;
 
 // SDL GUID and index of the joystick to use.
 static char *joystick_guid = "";
 static int joystick_index = -1;
+#endif
 
 // Which joystick axis to use for horizontal movement, and whether to
 // invert the direction:
@@ -115,6 +128,11 @@ static int DeviceIndex(void)
     SDL_JoystickGUID guid, dev_guid;
     int i;
 
+#ifdef __PSP__
+    // HACK: Joystick GUID checking is broken
+    return joystick_index;
+#endif
+
     guid = SDL_JoystickGetGUIDFromString(joystick_guid);
 
     // GUID identifies a class of device rather than a specific device.
@@ -152,6 +170,11 @@ void I_InitJoystick(void)
     {
         return;
     }
+
+#ifdef __PSP__
+    // On PSP, technically there are no windows to be in or out of focus
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+#endif
 
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {

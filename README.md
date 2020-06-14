@@ -1,3 +1,63 @@
+# Chocolate Doom PSP
+
+A simple port of Doom for the Sony PSP.
+
+![](images/pspdoom-xmb.png)
+![](images/pspdoom-game.png)
+
+## Motivation
+
+Doom is one of the most widely ported games there is and there are even
+many PSP ports that already exist. The purpose of this project was not to
+reinvent the wheel, but to work with a codebase that is known to be extremely
+portable for the purposes of learning more about the porting process.
+
+A project like this is small and allows me to learn and solve the various
+challenges that arise when porting _any_ game to the PSP (or other platforms, to
+some extent). The skills learned are directly transferrable. Because of this, work
+on future game ports will consist entirely of overcoming game-specific challenges
+rather than getting hung up on the common issues that come with the territory.
+
+## Prerequisites
+* You will need a PSP capable of running unsigned code. There are many
+  [guides](https://wololo.net/cfw4dummies) available on how to install custom
+  firmware. Alternately, you can [sign](https://github.com/int-0/ebootsigner)
+  your executable so it will run on an unmodified PSP. This port also works in
+  [PSP emulators](https://www.ppsspp.org/).
+
+## Compiling
+
+* Install the [PSP toolchain](https://github.com/pspdev/psptoolchain)
+* Build [SDL2](https://hg.libsdl.org/SDL/), [SDL2_mixer](https://hg.libsdl.org/SDL_mixer/),
+  and [SDL2_net](https://hg.libsdl.org/SDL_net/) using the PSP toolchain (only SDL2 has a
+  PSP Makefile, you will need to write your own for SDL2_mixer and SDL2_net)
+* Use my [PSP CMake toolchain file](https://gist.github.com/mwpenny/00c51d3c2a45c4ec0002ef8645efc09d)
+  to generate a Makefile for Chocolate Doom
+* Build Chocolate Doom for PSP by running `make chocolate-doom`
+
+## Running
+
+* On your PSP, create a directory at `ms0:/PSP/GAME/DOOM` and copy `EBOOT.PBP` and a
+  Doom WAD file to that location
+* Navigate to the game using the PSP XMB menu and start it
+
+## PSP controls
+
+* D-pad/joystick: movement
+* Cross: fire
+* Circle: use
+* Square/Triangle: Next/previous weapon
+* L/R: Strafe
+* Start: Menu
+* Select: Automap
+
+## Limitations
+
+* No sound. It works but I have disabled it since every time a new (uncached) sound loads,
+  the game freezes for several seconds. An improvement could be to cache them all on startup
+  but it cannot be done naively due to memory constraints.
+
+
 # Chocolate Doom
 
 Chocolate Doom aims to accurately reproduce the original DOS version of
